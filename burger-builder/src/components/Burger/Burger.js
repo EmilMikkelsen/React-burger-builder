@@ -14,7 +14,7 @@ const burger = (props) => {
         }, []);
 
         if(transformedIngredients.length === 0) {
-            transformedIngredients = <p>Gå venligst i gang med at tilføje ingredienser</p>
+            transformedIngredients = <p style={{margin: '110px 0 150px'}}>Gå venligst i gang med at tilføje ingredienser</p>
         }
     return (
         <div className="Burger">
