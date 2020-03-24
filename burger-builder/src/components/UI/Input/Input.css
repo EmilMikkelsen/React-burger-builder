@@ -1,0 +1,51 @@
+.CheckoutInput {
+    width: 49%;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+}
+    @media (max-width: 600px) {
+        .CheckoutInput {
+            width: 100%;
+        }
+    }
+
+    .CheckoutInput .Label {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 8px;
+        padding: 0;
+        text-align: left;
+    }
+
+    .CheckoutInput .ValidateMessage {
+        font-weight: 700;
+        display: block;
+        margin: 0;
+        padding: 0;
+        color: red;
+    }
+
+    .CheckoutInput .InputElement {
+        outline: none;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        font: inherit;
+        padding: 5px 10px;
+        display: block;
+        width: 100%;
+    }
+
+    .CheckoutInput .InputElement:focus {
+        outline: none;
+        background-color: #ccc;
+    }
+
+    .CheckoutInput .InputElement.Invalid {
+        border: 1px solid red;
+        background-color: salmon;
+        color: #fff;
+    }
+
+    .CheckoutInput .InputElement.Invalid::placeholder {
+        color: #fff;
+    }

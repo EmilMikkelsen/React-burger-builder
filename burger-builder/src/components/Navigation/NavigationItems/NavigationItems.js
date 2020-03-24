@@ -7,8 +7,11 @@ const navigationItems = () => (
         <li>
             <NavLink to="/" exact>Burger builder</NavLink>
         </li>
-        <li>
+        {/* <li>
             <NavLink to="/checkout">Checkout</NavLink>
+        </li> */}
+        <li>
+            <NavLink to="/orders">Orders</NavLink>
         </li>
     </ul>
 );

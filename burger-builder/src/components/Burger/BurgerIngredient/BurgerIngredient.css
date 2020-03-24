@@ -21,7 +21,7 @@
   position: relative;
 
   z-index: 6;
-  margin-bottom: -70px;
+  margin-bottom: -100px;
   background-image: url(./topbun.png);
   background-size: cover;
   background-position: center;
@@ -98,7 +98,7 @@
   margin: 2% auto;
   /* border-radius: 15px; */
 
-  height: 160px;
+  height: 105px;
   background-image: url(./patty.png);
   background-size: cover;
   background-position: center;
@@ -114,8 +114,8 @@
   background: linear-gradient(#f4d004, #d6bb22);
   border-radius: 20px;
 
-  height: 190px;
-  margin-bottom: -150px;
+  height: 110px;
+  margin-bottom: -90px;
   position: relative;
   z-index: 4;
   background-image: url(./cheese.png);
@@ -135,7 +135,8 @@
   background-size: cover;
   background-position: center;
   position: relative;
-  margin-top: -150px;
+  margin-top: -140px;
+  margin-bottom: -170px;
 }
 
 .Bacon {
@@ -146,6 +147,7 @@
 
   height: 100px;
   margin-bottom: -70px;
+  margin-top: -70px;
   background-image: url(./bacon.png);
   background-size: cover;
   background-position: center;
