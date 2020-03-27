@@ -13,6 +13,9 @@ const navigationItems = () => (
         <li>
             <NavLink to="/orders">Orders</NavLink>
         </li>
+        <li>
+            <NavLink to="/auth">Log in</NavLink>
+        </li>
     </ul>
 );
 

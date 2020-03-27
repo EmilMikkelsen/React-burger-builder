@@ -1,41 +1,33 @@
-.ContactData {
+.Auth {
     margin: 20px auto;
     width: 80%;
     text-align: center;
     box-shadow: 0px 10px 15px 0px rgba(0,0,0,0.3);
     border: 1px solid #ccc;
     padding: 30px;
-
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 11;
-    background-color: #fff;
 }
 
-    .ContactData form {
+    .Auth form {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
     }
 
-        .ContactData form input,
-        .ContactData form select {
+        .Auth form input {
             width: 100%;
             height: 40px;
             padding-left: 15px;
             box-sizing: border-box;
         }
 
-        .ContactData form button {
+        .Auth form button {
             width: 100%;
             padding: 0;
             margin: 0;
         }
 
 @media (min-width: 600px) {
-    .ContactData {
+    .Auth {
         width: 500px;
     }
 }

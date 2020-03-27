@@ -8,6 +8,13 @@
     margin: auto;
     padding: 10px;
     box-sizing: border-box;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:450px;
+    height: 100vh;
+    justify-content: center;
 }
 
 .OrderButton {
