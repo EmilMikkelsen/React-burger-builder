@@ -2,19 +2,20 @@ import React from 'react';
 import './NavigationItems.css';
 import { NavLink } from 'react-router-dom';
 
-const navigationItems = () => (
+const navigationItems = (props) => (
     <ul className="NavigationItems">
         <li>
             <NavLink to="/" exact>Burger builder</NavLink>
         </li>
-        {/* <li>
-            <NavLink to="/checkout">Checkout</NavLink>
-        </li> */}
+        { props.isAuthenticated 
+            ? <li><NavLink to="/orders">Orders</NavLink></li>
+            : null
+        }
         <li>
-            <NavLink to="/orders">Orders</NavLink>
-        </li>
-        <li>
-            <NavLink to="/auth">Log in</NavLink>
+            { !props.isAuthenticated
+                ? <NavLink to="/auth">Log in</NavLink>
+                : <NavLink to="/logout">Log out</NavLink> 
+            }
         </li>
     </ul>
 );

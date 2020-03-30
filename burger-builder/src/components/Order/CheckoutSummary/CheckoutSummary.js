@@ -6,7 +6,7 @@ import './CheckoutSummary.css';
 const checkoutSummary = (props) => {
     return (
         <div className="CheckoutSummary">
-            <h1>Vi håber det smager!</h1>
+            <h1>We hope it tastes well!</h1>
             <div >
                 <Burger ingredients={props.ingredients} />
             </div>

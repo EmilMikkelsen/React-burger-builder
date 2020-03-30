@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import Aux from '../../../hoc/Auxiliary/Auxiliary';
 import Button from '../../UI/Button/Button';
 
+// Kan godt gøres til en functional component
 class OrderSummary extends Component {
-    // Kan godt gøres til en functional component
-    componentDidUpdate() {
-        console.log('[OrderSummary] DidUpdate');
-    }
-
     render () {
         const ingredientSummary = Object.keys(this.props.ingredients)
         .map(igKey => {
@@ -19,15 +15,15 @@ class OrderSummary extends Component {
 
         return (
             <Aux>
-                <h3>Din bestilling</h3>
-                <p>En lækker burger med følgende ingredienser:</p>
+                <h3>Your order</h3>
+                <p>a delicious burger with the following ingredients:</p>
                 <ul>
                     {ingredientSummary}
                 </ul>
-                <p><strong>{this.props.price.toFixed(2)}</strong></p>
-                <p>Forsæt til kassen?</p>
-                <Button btnType="Danger" clicked={this.props.purchaseCancelled}>FORTRYD</Button>
-                <Button btnType="Success" clicked={this.props.purchaseContinued}>FORSÆT</Button>
+                <p><strong>{this.props.price.toFixed(2)} kr.</strong></p>
+                <p>Continue to checkout?</p>
+                <Button btnType="Danger" clicked={this.props.purchaseCancelled}>CANCEL</Button>
+                <Button btnType="Success" clicked={this.props.purchaseContinued}>CONTINUE</Button>
             </Aux>
         );
     }

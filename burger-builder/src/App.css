@@ -1,5 +1,9 @@
 .App {
   font-size: 1.6em;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100vh;
 }
 
 .App-logo {

@@ -7,6 +7,7 @@ import Input from '../../../components/UI/Input/Input';
 import './ContactData.css';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+import { checkValidity } from '../../../shared/utility';
 
 class ContactData extends Component {
     state= {
@@ -15,7 +16,7 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'text',
-                    placeholder: 'Dit navn'
+                    placeholder: 'Name'
                 },
                 value: '',
                 validation: {
@@ -28,7 +29,7 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'text',
-                    placeholder: 'Gadenavn'
+                    placeholder: 'Street'
                 },
                 value: '',
                 validation: {
@@ -41,7 +42,7 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'number',
-                    placeholder: 'Post nr.'
+                    placeholder: 'Zipcode'
                 },
                 value: '',
                 validation: {
@@ -57,7 +58,7 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'text',
-                    placeholder: 'By'
+                    placeholder: 'City'
                 },
                 value: '',
                 validation: {
@@ -70,7 +71,7 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'email',
-                    placeholder: 'Din email'
+                    placeholder: 'Email'
                 },
                 value: '',
                 validation: {
@@ -84,11 +85,11 @@ class ContactData extends Component {
                 elementType: 'select',
                 elementConfig: {
                     options: [
-                        {value: 'fastest', displayValue: 'Hurtigst muligt'},
-                        {value: 'twohours', displayValue: 'Om 2 timer'},
-                        {value: 'threehours', displayValue: 'Om 3 timer'},
-                        {value: 'fourhours', displayValue: 'Om 4 timer'},
-                        {value: 'fivehours', displayValue: 'Om 5 timer'},
+                        {value: 'fastest', displayValue: 'Fast as lightning!'},
+                        {value: 'twohours', displayValue: 'In 2 hours'},
+                        {value: 'threehours', displayValue: 'In 3 hours'},
+                        {value: 'fourhours', displayValue: 'In 4 hours'},
+                        {value: 'fivehours', displayValue: 'In 5 hours'},
                     ]
                 },
                 value: 'fastest',
@@ -108,38 +109,11 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         }
 
-        this.props.onOrderBurger(order);
-    }
-
-    checkValidity(value, rules) {
-        let isValid = true;
-
-        if(rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if(rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if(rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        if(rules.isNumeric) {
-            const pattern = /^\d+$/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
+        this.props.onOrderBurger(order, this.props.token);
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -150,7 +124,7 @@ class ContactData extends Component {
             ...updatedOrderForm[inputIdentifier]
         };
         updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.valid = checkValidity(updatedFormElement.value, updatedFormElement.validation);
         updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
@@ -158,7 +132,6 @@ class ContactData extends Component {
         for(let inputIdentifier in updatedOrderForm) {
             formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
         }
-        console.log(formIsValid);
         this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
     }
 
@@ -185,7 +158,7 @@ class ContactData extends Component {
                         changed={(event) => this.inputChangedHandler(event, formElement.id)}
                     />
                 ))}
-                <Button btnType="Success" disabled={!this.state.formIsValid}>Bestil</Button>
+                <Button btnType="Success" disabled={!this.state.formIsValid}>Order</Button>
             </form>
         );
 
@@ -195,7 +168,7 @@ class ContactData extends Component {
 
         return ( 
             <div className="ContactData">
-                <h4>Indtast dine oplysninger her</h4>
+                <h4>Enter your information here</h4>
                 {form}
             </div>
         );
@@ -206,13 +179,15 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     };
 };
 

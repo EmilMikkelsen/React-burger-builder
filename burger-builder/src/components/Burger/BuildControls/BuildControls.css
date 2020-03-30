@@ -8,13 +8,6 @@
     margin: auto;
     padding: 10px;
     box-sizing: border-box;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    width:450px;
-    height: 100vh;
-    justify-content: center;
 }
 
 .OrderButton {
@@ -55,5 +48,16 @@
     }
     100% {
         transform: scale(1);
+    }
+}
+
+@media (min-width: 900px) {
+    .BuildControls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width:450px;
+        height: 100vh;
+        justify-content: center;
     }
 }

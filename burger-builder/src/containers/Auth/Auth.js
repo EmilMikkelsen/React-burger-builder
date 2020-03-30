@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { checkValidity } from '../../shared/utility';
+
 import * as actions from '../../store/actions/index'
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -13,7 +16,7 @@ class Auth extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'email',
-                    placeholder: 'Din Email'
+                    placeholder: 'Email'
                 },
                 value: '',
                 validation: {
@@ -27,7 +30,7 @@ class Auth extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'password',
-                    placeholder: 'Din adgangskode'
+                    placeholder: 'Password'
                 },
                 value: '',
                 validation: {
@@ -41,32 +44,10 @@ class Auth extends Component {
         isSignup: true
     }
 
-    checkValidity(value, rules) {
-        let isValid = true;
-
-        if(rules.required) {
-            isValid = value.trim() !== '' && isValid;
+    componentDidMount() {
+        if(!this.props.buildingBurger && this.props.authRedirectPath !== '/') {
+            this.props.onSetAuthRedirectPath();
         }
-
-        if(rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if(rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        if(rules.isNumeric) {
-            const pattern = /^\d+$/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
     }
 
     inputChangedHandler = (event, controlName) => {
@@ -75,7 +56,7 @@ class Auth extends Component {
             [controlName]: {
                 ...this.state.controls[controlName],
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
+                valid: checkValidity(event.target.value, this.state.controls[controlName].validation),
                 touched: true
             }
         };
@@ -123,45 +104,51 @@ class Auth extends Component {
         if(this.props.error) {
             if(this.props.error.message === 'INVALID_EMAIL') {
                 errorMessage = (
-                    <p>Ikke gyldig e-mail</p>
+                    <p className="ErrorMessage">Invalid e-mail</p>
                 );
             } else if(this.props.error.message === 'TOO_MANY_ATTEMPTS_TRY_LATER') {
                 errorMessage = (
-                    <p>For mange forsøg, prøv igen senere</p>
+                    <p className="ErrorMessage">Too many attempts, try again later</p>
                 );
             } else if (this.props.error.message === 'EMAIL_NOT_FOUND') {
                 errorMessage = (
-                    <p>E-mail ikke fundet</p>
+                    <p className="ErrorMessage">E-mail not found</p>
                 );
             } else if (this.props.error.message === 'INVALID_PASSWORD') {
                 errorMessage = (
-                    <p>Ikke gyldigt kodeord</p>
+                    <p className="ErrorMessage">Invalid password</p>
                 );
             } else if (this.props.error.message === 'USER_DISABLED') {
                 errorMessage = (
-                    <p>Bruger ikke tilgængelig</p>
+                    <p className="ErrorMessage">User is disabled</p>
                 );
             } else if (this.props.error.message === 'EMAIL_EXISTS') {
                 errorMessage = (
-                    <p>E-mail eksistere</p>
+                    <p className="ErrorMessage">E-mail exists</p>
                 );
             } else {
                 errorMessage = (
-                    <p>Fejl</p>
+                    <p className="ErrorMessage">Error</p>
                 );
             }
         }
 
+        let authRedirect = null;
+        if(this.props.isAuthenticated) {
+            authRedirect = <Redirect to={this.props.authRedirectPath} />;
+        }
+
         return (
             <div className="Auth">
+                {authRedirect}
                 <form onSubmit={this.submitHandler}>
-                    {form}
                     {errorMessage}
+                    {form}
                     <Button btnType="Success">Submit</Button>
                 </form>
                 <Button 
                     clicked={this.switchAuthModeHandler}
-                    btnType="Danger">{this.state.isSignup ? 'Sign in' : 'Sign up'}
+                    btnType="Danger">Switch to {this.state.isSignup ? 'sign in' : 'sign up'}
                 </Button>
             </div>
         );
@@ -171,13 +158,17 @@ class Auth extends Component {
 const mapStateToprops = state => {
     return {
         loading: state.auth.loading,
-        error: state.auth.error
+        error: state.auth.error,
+        isAuthenticated: state.auth.token !== null,
+        buildingBurger: state.burgerBuilder.building,
+        authRedirectPath: state.auth.authRedirectPath
     };
 };
 
 const mapDispatchToprops = dispatch => {
     return {
-        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup))
+        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
+        onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
     };
 };
 
