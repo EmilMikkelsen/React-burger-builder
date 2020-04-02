@@ -147,10 +147,35 @@
 
   height: 100px;
   margin-bottom: -70px;
-  margin-top: -70px;
+  margin-top: -80px;
   background-image: url(./bacon.png);
   background-size: cover;
   background-position: center;
   position: relative;
   z-index: 5;
+}
+
+@media (max-width: 500px) {
+  .Meat,
+  .Bacon,
+  .Cheese,
+  .Salad,
+  .BreadBottom,
+  .BreadTop {
+    width: 300px;
+  }
+
+  .Meat,
+  .Cheese {
+    height: 90px;
+  }
+
+  .Salad {
+    height: 230px;
+    margin-bottom: -190px;
+  }
+
+  .BreadTop {
+    margin-bottom: -120px;
+  }  
 }
