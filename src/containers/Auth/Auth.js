@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { checkValidity } from '../../shared/utility';
@@ -9,150 +9,146 @@ import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import './Auth.css';
 
-class Auth extends Component {
-    state = {
-        controls: {
-            email: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'email',
-                    placeholder: 'Email'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: true
-                },
-                valid: false,
-                touched: false
+const Auth = props => {
+    const [controls, setControls] = useState({
+        email: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'email',
+                placeholder: 'Email'
             },
-            password: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'password',
-                    placeholder: 'Password'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    minLength: 8
-                },
-                valid: false,
-                touched: false
-            }
+            value: '',
+            validation: {
+                required: true,
+                isEmail: true
+            },
+            valid: false,
+            touched: false
         },
-        isSignup: false
-    }
-
-    componentDidMount() {
-        if(!this.props.buildingBurger && this.props.authRedirectPath !== '/') {
-            this.props.onSetAuthRedirectPath();
+        password: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'password',
+                placeholder: 'Password'
+            },
+            value: '',
+            validation: {
+                required: true,
+                minLength: 8
+            },
+            valid: false,
+            touched: false
         }
-    }
+    });
+    const [isSignup, setIsSignup] = useState(false);
 
-    inputChangedHandler = (event, controlName) => {
+    const { buildingBurger, authRedirectPath, onSetAuthRedirectPath } = props;
+
+    useEffect(() => {
+        if(!buildingBurger && authRedirectPath !== '/') {
+            onSetAuthRedirectPath();
+        }
+    }, [buildingBurger, authRedirectPath, onSetAuthRedirectPath]);
+
+    const inputChangedHandler = (event, controlName) => {
         const updatedControls = {
-            ...this.state.controls,
+            ...controls,
             [controlName]: {
-                ...this.state.controls[controlName],
+                ...controls[controlName],
                 value: event.target.value,
-                valid: checkValidity(event.target.value, this.state.controls[controlName].validation),
+                valid: checkValidity(event.target.value, controls[controlName].validation),
                 touched: true
             }
         };
-        this.setState({controls: updatedControls});
+        setControls(updatedControls)
     }
 
-    submitHandler = (event) => {
+    const submitHandler = (event) => {
         event.preventDefault();
-        this.props.onAuth(this.state.controls.email.value, this.state.controls.password.value, this.state.isSignup);
+        props.onAuth(controls.email.value, controls.password.value, isSignup);
     }
 
-    switchAuthModeHandler = () => {
-        this.setState(prevState => {
-            return {isSignup: !prevState.isSignup};
+    const switchAuthModeHandler = () => {
+        setIsSignup(!isSignup)
+    }
+
+    const formElementsArray = [];
+    for( let key in controls ) {
+        formElementsArray.push({
+            id: key,
+            config: controls[key]
         });
     }
 
-    render () {
-        const formElementsArray = [];
-        for( let key in this.state.controls ) {
-            formElementsArray.push({
-                id: key,
-                config: this.state.controls[key]
-            });
-        }
+    let form = formElementsArray.map(formElement => (
+        <Input
+            key={formElement.id}
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+            invalid={!formElement.config.valid}
+            shouldValidate={formElement.config.validation}
+            touched={formElement.config.touched}
+            changed={(event) => inputChangedHandler(event, formElement.id)}
+        />
+    ));
 
-        let form = formElementsArray.map(formElement => (
-            <Input
-                key={formElement.id}
-                elementType={formElement.config.elementType}
-                elementConfig={formElement.config.elementConfig}
-                value={formElement.config.value}
-                invalid={!formElement.config.valid}
-                shouldValidate={formElement.config.validation}
-                touched={formElement.config.touched}
-                changed={(event) => this.inputChangedHandler(event, formElement.id)}
-            />
-        ));
-
-        if(this.props.loading) {
-            form = <Spinner />;
-        }
-
-        let errorMessage = null;
-        if(this.props.error) {
-            if(this.props.error.message === 'INVALID_EMAIL') {
-                errorMessage = (
-                    <p className="ErrorMessage">Invalid e-mail</p>
-                );
-            } else if(this.props.error.message === 'TOO_MANY_ATTEMPTS_TRY_LATER') {
-                errorMessage = (
-                    <p className="ErrorMessage">Too many attempts, try again later</p>
-                );
-            } else if (this.props.error.message === 'EMAIL_NOT_FOUND') {
-                errorMessage = (
-                    <p className="ErrorMessage">E-mail not found</p>
-                );
-            } else if (this.props.error.message === 'INVALID_PASSWORD') {
-                errorMessage = (
-                    <p className="ErrorMessage">Invalid password</p>
-                );
-            } else if (this.props.error.message === 'USER_DISABLED') {
-                errorMessage = (
-                    <p className="ErrorMessage">User is disabled</p>
-                );
-            } else if (this.props.error.message === 'EMAIL_EXISTS') {
-                errorMessage = (
-                    <p className="ErrorMessage">E-mail exists</p>
-                );
-            } else {
-                errorMessage = (
-                    <p className="ErrorMessage">Error</p>
-                );
-            }
-        }
-
-        let authRedirect = null;
-        if(this.props.isAuthenticated) {
-            authRedirect = <Redirect to={this.props.authRedirectPath} />;
-        }
-
-        return (
-            <div className="Auth">
-                {authRedirect}
-                <form onSubmit={this.submitHandler}>
-                    {errorMessage}
-                    {form}
-                    <Button btnType="Success">{this.state.isSignup ? 'Create account' : 'Log in'}</Button>
-                </form>
-                <Button 
-                    clicked={this.switchAuthModeHandler}
-                    btnType="Danger">{this.state.isSignup ? 'Already signed up? Log in here' : 'Not registered? Create an account'}
-                </Button>
-            </div>
-        );
+    if(props.loading) {
+        form = <Spinner />;
     }
+
+    let errorMessage = null;
+    if(props.error) {
+        if(props.error.message === 'INVALID_EMAIL') {
+            errorMessage = (
+                <p className="ErrorMessage">Invalid e-mail</p>
+            );
+        } else if(props.error.message === 'TOO_MANY_ATTEMPTS_TRY_LATER') {
+            errorMessage = (
+                <p className="ErrorMessage">Too many attempts, try again later</p>
+            );
+        } else if (props.error.message === 'EMAIL_NOT_FOUND') {
+            errorMessage = (
+                <p className="ErrorMessage">E-mail not found</p>
+            );
+        } else if (props.error.message === 'INVALID_PASSWORD') {
+            errorMessage = (
+                <p className="ErrorMessage">Invalid password</p>
+            );
+        } else if (props.error.message === 'USER_DISABLED') {
+            errorMessage = (
+                <p className="ErrorMessage">User is disabled</p>
+            );
+        } else if (props.error.message === 'EMAIL_EXISTS') {
+            errorMessage = (
+                <p className="ErrorMessage">E-mail exists</p>
+            );
+        } else {
+            errorMessage = (
+                <p className="ErrorMessage">Error</p>
+            );
+        }
+    }
+
+    let authRedirect = null;
+    if(props.isAuthenticated) {
+        authRedirect = <Redirect to={props.authRedirectPath} />;
+    }
+
+    return (
+        <div className="Auth">
+            {authRedirect}
+            <form onSubmit={submitHandler}>
+                {errorMessage}
+                {form}
+                <Button btnType="Success">{isSignup ? 'Create account' : 'Log in'}</Button>
+            </form>
+            <Button 
+                clicked={switchAuthModeHandler}
+                btnType="Danger">{isSignup ? 'Already signed up? Log in here' : 'Not registered? Create an account'}
+            </Button>
+        </div>
+    );
 }
 
 const mapStateToprops = state => {

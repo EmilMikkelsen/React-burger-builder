@@ -1,7 +1,6 @@
 import React, { useEffect, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
-// import asyncComponent from './hoc/asyncComponent/asyncComponent';
 import Spinner from './components/UI/Spinner/Spinner';
 
 import './App.css';
@@ -23,15 +22,15 @@ const Auth = React.lazy(() => {
 });
 
 const App = props => {
+  const { onTryAutoLogin } = props;
+  
   useEffect(() => {
-    props.onTryAutoLogin();
-    console.log('[useEffect] -> onTryLogin');
-  });
-  // }, []);
+    onTryAutoLogin();
+  }, [onTryAutoLogin]);
 
   let routes = (
     <Switch>
-      <Route path="/auth" component={Auth} />
+      <Route path="/auth" render={props => <Auth {...props} />} />
       <Route path="/" component={BurgerBuilder} />
     </Switch>
   );
@@ -39,9 +38,9 @@ const App = props => {
   if(props.isAuthenticated) {
     routes = (
       <Switch>
-        <Route path="/checkout" component={Checkout} />
-        <Route path="/orders" component={Orders} />
-        <Route path="/auth" component={Auth} />
+        <Route path="/checkout" render={props => <Checkout {...props} />} />
+        <Route path="/orders" render={props => <Orders {...props} />} />
+        <Route path="/auth" render={props => <Auth {...props} />} />
         <Route path="/logout" component={Logout} />
         <Route path="/" component={BurgerBuilder} />
       </Switch>
